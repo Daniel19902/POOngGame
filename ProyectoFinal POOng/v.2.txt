@@ -1,0 +1,306 @@
+--------------------------------------------------------------------------------------------POOngGameGUI  --------------------------------------------------------------------------------------------
+
+package presentacion;
+
+import javax.swing.JFrame;
+
+
+public class POOngGameGUI  {
+
+    public static void main(String[] args){
+        Ventana ventana = new Ventana();
+        ventana.setVisible(true);
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    }
+
+}
+
+--------------------------------------------------------------------------------------------Ventana--------------------------------------------------------------------------------------------
+package presentacion;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+public class Ventana extends JFrame {
+
+
+    Game game ;
+
+    public Ventana() {
+        setTitle("Pong - Absolute");
+        setSize(800, 500);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        game = new Game();
+        add(game);
+
+
+        addKeyListener(new EventoTablero());
+        new Hilo(game).start();
+
+    }
+
+
+    public void prepareActions(){
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing (WindowEvent e){
+                close();
+            }
+        });
+    }
+
+    public void close(){
+        int valor = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit POOng", "Abvertencia", JOptionPane.YES_NO_OPTION);
+        if (valor == JOptionPane.YES_NO_OPTION){
+            System.exit(0);
+        }
+    }
+
+    public void prepareElements(){
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(screenSize.width/2,screenSize.height);
+        setLocationRelativeTo(null);
+        setLayout(null);
+    }
+}
+
+
+
+
+--------------------------------------------------------------------------------------------Game --------------------------------------------------------------------------------------------
+
+package presentacion;
+
+import aplicacion.POOngGame;
+import aplicacion.Racket;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.*;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
+
+public class Game extends JPanel {
+
+    POOngGame pong;
+    POOngGame racketOne;
+    private Rectangle2D racketTwo;
+    private JLabel ball;
+    private ImageIcon imagenRacketOne;
+
+    public Game(){
+        pong = new POOngGame();
+        racketOne = new POOngGame();
+        this.setBackground(Color.cyan);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setPaint(Color.WHITE);
+        dibujar(g2);
+
+    }
+
+    public void prepareElementos(){
+    }
+
+    private void dibujar(Graphics2D g) {
+        Line2D.Double linea = new Line2D.Double(getBounds().getCenterX(), 0, getBounds().getCenterX(), getBounds().getMaxY());
+        g.draw(linea);
+        g.fill(racketOne.addRacketOne());
+        update();
+
+    }
+
+    private void update() {
+        if(EventoTablero.w) {
+            racketOne.moveRacketOne(true);
+        }
+        if(EventoTablero.s){
+            racketOne.moveRacketOne(false);
+        }
+
+    }
+
+}
+
+--------------------------------------------------------------------------------------------Hilo --------------------------------------------------------------------------------------------
+
+package presentacion;
+
+import sun.security.rsa.RSASignature;
+
+public class Hilo extends Thread {
+
+    private final Game canvas;
+
+    public Hilo (Game canvas){
+        this.canvas = canvas;
+    }
+
+    public void run(){
+        while (true) {
+            canvas.repaint();
+            try {
+                Thread.sleep(1);
+            } catch (Exception e) {
+                System.out.println("Error Graphics engine: " + e.getMessage());
+            }
+        }
+
+    }
+}
+
+--------------------------------------------------------------------------------------------EventoTablero --------------------------------------------------------------------------------------------
+
+package presentacion;
+
+
+import java.awt.event.*;
+
+
+public class EventoTablero extends KeyAdapter {
+
+    public static boolean w, s, up, down;
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+        int id = e.getKeyCode();
+        if (id == KeyEvent.VK_A) {
+            w = true;
+
+        }
+        if (id == KeyEvent.VK_D) {
+            s = true;
+
+        }
+        if (id == KeyEvent.VK_UP) {
+            up = true;
+        }
+        if (id == KeyEvent.VK_DOWN) {
+            down = true;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+        int id = e.getKeyCode();
+        if (id == KeyEvent.VK_A) {
+            w = false;
+        }
+        if (id == KeyEvent.VK_D) {
+            s = false;
+        }
+        if (id == KeyEvent.VK_UP) {
+            up = false;
+        }
+        if (id == KeyEvent.VK_DOWN) {
+            down = false;
+        }
+    }
+
+}
+
+
+
+--------------------------------------------------------------------------------------------Racket --------------------------------------------------------------------------------------------
+
+package aplicacion;
+
+import presentacion.EventoTablero;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
+public class Racket {
+
+    private int x = 100;
+    private int y = 100;
+    private int wigth = 100;
+    private  int heigth = 50;
+
+    public Racket(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+
+    public Rectangle2D getRaqueta() {
+        return new Rectangle2D.Double(x, y, wigth, heigth);
+    }
+
+    public void moveRacketOne(boolean limite){
+        if (limite) x++;
+        else x--;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getWigth(){
+        return wigth;
+    }
+
+    public int getHeigth(){
+        return heigth;
+    }
+}
+
+
+
+--------------------------------------------------------------------------------------------POOngGame --------------------------------------------------------------------------------------------
+
+
+package aplicacion;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
+public class POOngGame {
+
+    private Racket racketOne;
+    private Racket racketTwo;
+    private ArrayList<Ball> balls;
+
+    public POOngGame(){
+        racketOne = new Racket(100,100);
+
+    }
+
+    public Rectangle2D addRacketOne(){
+        return racketOne.getRaqueta();
+    }
+
+    public void moveRacketOne(boolean limite){
+        racketOne.moveRacketOne(limite);
+    }
+
+    public void addRacketTwo(int x, int y){
+        racketTwo = new Racket(x, y);
+    }
+
+    public Racket getRacketOne(){
+        return racketOne;
+    }
+
+    public Racket getRacketTwo(){
+        return racketTwo;
+    }
+
+}

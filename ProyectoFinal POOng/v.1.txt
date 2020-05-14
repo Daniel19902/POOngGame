@@ -1,0 +1,144 @@
+package presentacion;
+
+import aplicacion.POOngGame;
+import aplicacion.Racket;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
+public class Game extends KeyAdapter {
+
+    private  Ventana ventana;
+    private POOngGame pong;
+    private JLabel racketOne;
+    private JLabel racketTwo;
+    private JLabel ball;
+    private ImageIcon imagenRacketOne;
+
+    public Game(){
+        ventana = new Ventana("Pong");
+        ball = new JLabel();
+        pong = new POOngGame();
+        prepareElements();
+        prepareAcciones();
+
+    }
+
+    public void prepareElements(){
+        pong.addRacketOne(100,100);
+        pong.addRacketTwo(200,200);
+        racketOne = new JLabel();
+        racketTwo = new JLabel();
+        Image img = new ImageIcon("android.PNG").getImage();
+        imagenRacketOne =new ImageIcon(img.getScaledInstance(100,50, Image.SCALE_SMOOTH));
+        racketOne.setIcon(imagenRacketOne);
+        racketOne.setBounds(pong.getRacketOne().getX(),pong.getRacketOne().getY(),pong.getRacketOne().getWigth(),pong.getRacketOne().getHeigth());
+        ventana.add(racketOne);
+
+    }
+
+
+    public void prepareAcciones(){
+
+        ventana.addKeyListener(new KeyListener(){
+
+            public void keyTyped(KeyEvent e){
+
+                if(e.getKeyChar() == 'd' || e.getExtendedKeyCode() == KeyEvent.VK_UP)
+
+                    racketOne.setLocation((int)racketOne.getLocation().getX()+5, (int)racketOne.getLocation().getY());
+
+                if(e.getKeyChar() == 'a' || e.getExtendedKeyCode() == KeyEvent.VK_UP)
+
+                    racketOne.setLocation((int)racketOne.getLocation().getX()-5, (int)racketOne.getLocation().getY());
+
+                }
+
+            public void keyPressed(KeyEvent e){
+                if(e.getExtendedKeyCode() == KeyEvent.VK_UP){
+
+
+                }
+
+                if(e.getExtendedKeyCode() == KeyEvent.VK_DOWN){
+
+
+                }
+
+                if(e.getExtendedKeyCode() == KeyEvent.VK_LEFT){
+
+
+                }
+
+                if(e.getExtendedKeyCode() == KeyEvent.VK_RIGHT){
+
+
+                }
+
+
+
+            }
+        public void keyReleased(KeyEvent e){
+
+        }
+
+    });
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+private JButton onePlayer;
+    private JButton secondPlayer;
+    private JButton bot;
+    private Ventana ventana;
+    private Game player;
+
+    public POOngGameGUI(){
+        ventana = new Ventana("Inicio");
+        prepareButtons();
+        prepareActions();
+
+    }
+
+    public void prepareActions(){
+        onePlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onePlayer();
+            }
+        });
+
+    }
+
+    public void prepareButtons(){
+        onePlayer = new JButton();
+        secondPlayer = new JButton();
+        bot = new JButton();
+        onePlayer.setBounds((ventana.getWidth()/2)-50, (ventana.getHeight()/2)+25, 100, 50);
+        onePlayer.setText("1 Player");
+        secondPlayer.setBounds((ventana.getWidth()/2)-50, (ventana.getHeight()/2)+125, 100, 50);
+        secondPlayer.setText("2 Players");
+        bot.setBounds((ventana.getWidth()/2)-50, (ventana.getHeight()/2)+225, 100, 50);
+        bot.setText("bot");
+        ventana.add(onePlayer);
+        ventana.add(secondPlayer);
+        ventana.add(bot);
+    }
+
+    public void onePlayer(){
+        ventana.setVisible(false);
+        player = new Game();
+    }
