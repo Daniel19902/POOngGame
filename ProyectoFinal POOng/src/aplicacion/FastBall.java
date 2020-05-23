@@ -1,11 +1,14 @@
 package aplicacion;
 
-import java.io.Serializable;
-
-public class FastBall extends Power implements Serializable {
+public class FastBall extends Power  {
 
     @Override
-    public void spell(Ball ball,Racket racket) {
-        ball.fastBall();
+    public void spell(Table table, int index) {
+        table.getBall().fastBall();
+    }
+
+    @Override
+    public void deleteSpell() {
+
     }
 }

@@ -1,16 +1,20 @@
 package aplicacion;
 
 import java.awt.*;
-import java.io.Serializable;
-import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class Ball  implements Serializable {
 
-    private double x = 100;
-    private double y = 658;
-    private static int width = 35 , height = 35;
-    private Rectangle hitBox;
-    private double dx = 0, dy = 3;
+public abstract class Ball {
+
+    public double x = 100;
+    public double y = 658;
+    public static int width = 35 , height = 35;
+    public Rectangle hitBox;
+    public double dx = 0, dy = 3;
+    public boolean isPause = true;
+    public boolean isPower = false;
+    public boolean colder = false;
 
     public Ball(int x, int y){
         this.x = x;
@@ -20,17 +24,27 @@ public class Ball  implements Serializable {
 
     /** give spell*/
     public void fastBall(){
-        if (dy < 0) dy--;
-        else dy++;
+        if (dy < 0) dy -=1;
+        else dy +=1;
+    }
+
+    public void colder(Racket r){
+        if(colder) {
+            r.setDx(0);
+            setColder(false);
+            Timer timer = new Timer();
+            TimerTask cold = new TimerTask() {
+                @Override
+                public void run() {
+                    r.setDx(2);
+                }
+            };
+            timer.schedule(cold, 3000);
+        }
     }
 
     /** move things*/
-    public void move(){
-        if(y>768) dy = -dy;
-        if(y<0) dy = -dy;
-        y += dy;x += dx;
-        hitBox.setLocation((int) x,(int)y);
-    }
+    public abstract void move();
 
     /** set things*/
     public void setDx(double dx) {
@@ -47,6 +61,10 @@ public class Ball  implements Serializable {
 
     public void setX(int x) {
         this.x = x;
+    }
+
+    public void setIsPause(boolean pause){
+        this.isPause = pause;
     }
 
     /** get things*/
@@ -77,5 +95,11 @@ public class Ball  implements Serializable {
     public double getY() {
         return y;
     }
+
+    public void setColder(boolean cold){
+        this.colder = cold;
+    }
+
+    public abstract int getSpeed();
 
 }

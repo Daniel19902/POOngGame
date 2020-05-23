@@ -10,36 +10,80 @@ import java.util.*;
 public class POOngGame implements Serializable {
 
     private Table table;
-    private Power[] powers = {new Freezer(),new FastBall()};
-    private int[] times = {1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,20000};
+    private LinkedList<String> powerName = new LinkedList<String>();
+    private LinkedList<Power> powers = new LinkedList<Power>();
+    private int[] times = {5000,7000,8000,9000,10000,20000};
     private int[] timesSpell = {10000,20000};
     private Power powerSelect;
     private boolean isPower = false;
     private int spellRandom;
-    private boolean pause = true;
     private Timer timerPower;
+    private Timer addPower = new Timer();
+    private boolean pause = false;
 
     public POOngGame(){
         table = new Table();
-        timePower();
+    }
+
+    public void  addBall(String tBall){
+        table.addBall(tBall);
+    }
+
+    public void addOnePlayer(){
+        table.addOnePlayer();
+    }
+
+    public void run(){
+        table.run();
+    }
+
+    public void setPause(boolean pause){
+        this.pause = pause;
+        table.setPause(pause);
+    }
+
+    public void addScore(String nameOne, String nameTwo){
+        table.addScore(nameOne, nameTwo);
     }
 
     public void timePower(){
-        Timer timer = new Timer();
         TimerTask timePower = new TimerTask() {
             @Override
         public void run() {
-            if(!isPower){
+            if(!isPower && !pause){
                 isPower = true;
                 Random random = new Random();
                 int randomNumber = random.nextInt(times.length);
-                selectPower(times[randomNumber]);
+                selectPower(times[0]);
                 timerPower.purge();
             }
+        }};
+        addPower.schedule(timePower,5000,1000);
+    }
+
+    public void addPowers(){
+        for(String s : powerName){
+            if(s.equals("Freezer"))powers.add(new Freezer());
+            if(s.equals("Fast Ball"))powers.add(new FastBall());
+            if(s.equals("Flash"))powers.add(new Flash());
+            if(s.equals("Turtle"))powers.add(new Turtle());
+            if(s.equals("Energy"))powers.add(new Energy());
+            if(s.equals("Cold Racket"))powers.add(new ColdRacket());
+            /**
+            if(s.equals("Cold Racket"))powers.add(new Freezer());
+            if(s.equals("Phantom Racket"))powers.add(new Freezer());
+            */
         }
-    };
-        timer.schedule(timePower,5000,1000);
-}
+    }
+
+    public void moveRacked(boolean right, int racked){
+        table.moveRacked(right, racked);
+    }
+
+    public void setPowerName(LinkedList<String> powerName) {
+        this.powerName = powerName;
+        addPowers();
+    }
 
     public void selectPower(int delay){
         timerPower = new Timer();
@@ -48,18 +92,16 @@ public class POOngGame implements Serializable {
             @Override
             public void run() {
                 if (times == 0) {
-                    timeSpell();
                     Random randomSpell = new Random();
-                    spellRandom = randomSpell.nextInt(powers.length);
-                    powerSelect = powers[spellRandom];
+                    spellRandom = randomSpell.nextInt(powers.size());
+                    powerSelect = powers.get(spellRandom);
+                    timeSpell();
                     times++;
                 }
                 table.spell(powerSelect);
                 if(table.isPower()){
-                    powerSelect = null;
-                    table.setPower(false);
-                    isPower = false;
-                    times = 0;
+                    powerSelect = null;table.setPower(null);
+                    isPower = false;times = 0;
                     timerPower.cancel();
                 }
             }
@@ -68,45 +110,31 @@ public class POOngGame implements Serializable {
     }
 
     public void timeSpell(){
-        int time = 0;
+        int time ;
         Random random = new Random();
         time = random.nextInt(timesSpell.length);
+        table.getRackets().get(0).setIsPower(powerSelect);
+        table.getRackets().get(1).setIsPower(powerSelect);
         table.timeLimit(timesSpell[time]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-/** add things*/
-    public Power getPower(){
-        return this.powerSelect;
+    public Block getBlock(){
+        return table.getBlock();
     }
 
-    public void addPlayer(){
-        table.addPlayer();
-    }
-
-    public void addBot(){
-        table.addBot();
-    }
-
-/** move things*/
-
-    public void moveRacked(boolean right, int racked){
-        table.moveRacked(right, racked);
+    public void addObjective(){
+        table.addObjective();
     }
 
 
-/** get things*/
+
+   public void addTwoPlayers(){
+       table.addTwoPlayers();
+   }
+
+   public void addBots(){
+       table.addBots();
+   }
 
     public ArrayList<Racket> getRackets(){
         return table.getRackets();
@@ -121,18 +149,24 @@ public class POOngGame implements Serializable {
     }
 
     public boolean getPause(){
-        return pause;
+        this.pause = table.getPause();
+        return table.getPause();
     }
 
     public Score getScore(int i){
         return table.getScore(i);
     }
 
-    /** pause*/
+    public Objective getObjective(){
+        return table.getObjective();
+    }
 
-    public void setPause(boolean pause){
-        this.pause = pause;
-        table.setPause(pause);
+    public boolean isObjective(){
+        return table.getIsObjective();
+    }
+
+    public Power getPower(){
+        return this.powerSelect;
     }
 
     public void save(File file) throws IOException {
@@ -145,9 +179,8 @@ public class POOngGame implements Serializable {
         return salve.optionOpen(file);
     }
 
-    /** run */
-    public void run(){
-        table.run();
+    public void runObjective(){
+        table.runObjective();
     }
 
 }

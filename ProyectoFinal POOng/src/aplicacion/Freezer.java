@@ -1,25 +1,28 @@
 package aplicacion;
 
-import java.io.Serializable;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Freezer extends Power implements Serializable {
-    private Timer timer;
+public class Freezer extends Power {
+    private Timer timer = new Timer();
     public int freeze = 0;
 
     @Override
-    public void spell(Ball ball, Racket racket) {
-        timer = new Timer();
-        racket.freezer(freeze);
+    public void spell(Table table,int index) {
+        table.getRackets().get(index).freezer(freeze);
         TimerTask freezer = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("10 seg");
-                racket.noFreezer();
-                timer.cancel();
+                table.getRackets().get(index).noFreezer();
             }
         };
         timer.schedule(freezer, 2000);
+}
+
+    @Override
+    public void deleteSpell() {
+        
     }
+
 }

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f8d0b07a-bc66-4828-b897-ff264b23b589" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentacion/POOngGameGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentacion/POOngGameGUI.java" afterDir="false" />
-    </list>
+    <list default="true" id="f8d0b07a-bc66-4828-b897-ff264b23b589" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,11 +15,7 @@
       </list>
     </option>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-  </component>
   <component name="ProjectId" id="1apOMyr9cSWAXO3wvYTAeK2V5xN" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -78,14 +71,22 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="488" y="94" key="#com.intellij.ide.util.MemberChooser" timestamp="1589485776476">
+    <state x="137" y="40" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590028665318">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state x="488" y="94" key="#com.intellij.ide.util.MemberChooser/0.0.1366.768@0.0.1366.768" timestamp="1589485776476" />
-    <state x="413" y="132" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1588707031272">
+    <state x="137" y="40" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.768@0.0.1366.768" timestamp="1590028665318" />
+    <state x="488" y="94" key="#com.intellij.ide.util.MemberChooser" timestamp="1590207318353">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state x="413" y="132" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.768@0.0.1366.768" timestamp="1588707031272" />
+    <state x="488" y="94" key="#com.intellij.ide.util.MemberChooser/0.0.1366.768@0.0.1366.768" timestamp="1590207318353" />
+    <state x="479" y="270" width="408" height="237" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1589953613784">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="479" y="270" width="408" height="237" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1366.768@0.0.1366.768" timestamp="1589953613784" />
+    <state x="413" y="132" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1589675920820">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="413" y="132" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.768@0.0.1366.768" timestamp="1589675920820" />
     <state x="463" y="140" key="FileChooserDialogImpl" timestamp="1587760457232">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
@@ -114,10 +115,10 @@
       <screen x="0" y="0" width="1366" height="768" />
     </state>
     <state x="65" y="5" key="new project wizard/0.0.1366.768@0.0.1366.768" timestamp="1587760459533" />
-    <state x="339" y="172" key="run.anything.popup" timestamp="1589325349917">
+    <state x="339" y="172" key="run.anything.popup" timestamp="1589900238229">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state x="339" y="172" key="run.anything.popup/0.0.1366.768@0.0.1366.768" timestamp="1589325349917" />
+    <state x="339" y="172" key="run.anything.popup/0.0.1366.768@0.0.1366.768" timestamp="1589900238229" />
     <state x="346" y="89" width="672" height="678" key="search.everywhere.popup" timestamp="1589412302653">
       <screen x="0" y="0" width="1366" height="768" />
     </state>

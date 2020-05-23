@@ -18,7 +18,6 @@ public class Salve {
     }
 
     public POOngGame optionOpen(File file) throws IOException, ClassNotFoundException {
-        System.out.println("entre");
         FileInputStream open = new FileInputStream(file);
         ObjectInputStream read = new ObjectInputStream(open);
         POOngGame aux = (POOngGame) read.readObject();

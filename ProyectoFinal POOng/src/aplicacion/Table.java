@@ -6,109 +6,142 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Table implements Serializable {
+public class Table implements Serializable{
 
     private static int sideRight = 650;
     private static int sideLeft = 214;
     private static int sideUp = 61;
     private static int sideDown = 690;
     private ArrayList<Racket> rackets;
-    private boolean isPower = false;
+    private boolean isPower;
     private Ball ball;
     private ThreadBall threadBall = new ThreadBall(this);;
-    private boolean pause = true;
+    private boolean pause;
+    private Objective objective;
+    private Block block = null;
     private Timer timer;
-    private int[] moves = {214,650,200,300,400,500,600};
+    private int numberBots = 0;
 
 
     public Table(){
         rackets = new ArrayList<Racket>();
-        ball = new Ball(441-35,384-35);
+        isPower = false;
+        pause = true;
+        addObjective();
     }
 
-    public void addPlayer(){
+    public void addBall(String tBall){
+        if(tBall.equals("Ball(Default)") || tBall.equals("Incremental")) ball = new Incremental(441-35,384-35);
+        if(tBall.equals("Slow")) ball = new Slow(441-35,384-35);
+        if(tBall.equals("Fast")) ball = new Fast(441-35,384-35);
+    }
+
+    public void addOnePlayer(){
+        numberBots++;
         rackets.add(new Player(432-50,sideUp-40));
+        rackets.add(new Greedy(432-50,sideDown-80));
     }
 
-
-    public void addBot(){
-        rackets.add(new Extreme(432-50,sideDown-80));
+    public void addTwoPlayers(){
+        rackets.add(new Player(432-50,sideUp-40));
+        rackets.add(new Player(432-50,sideDown-80));
     }
 
+    public  void addBots(){
+        numberBots = 2;
+        rackets.add(new Greedy(432-50,sideUp-40));
+        rackets.add(new Greedy(432-50,sideDown-80));
+    }
 
-    public void intersect(){
+    public boolean intersect(){
+        boolean intersect = false;
         for(Racket r : rackets){
             if(r.getHitBox().intersects(ball.getHitBox())){
-                ball.setDy(-ball.getDy());
-                Random random = new Random();
-                int ran = random.nextInt(moves.length);
-                int finX = moves[ran];
-                int finy = 0;
-                if(ball.getDy()<0) finy = 61;
-                else finy = 762;
-
-                double valX = ball.getX();
-                double valY = ball.getY();
-
-
-                double dx = finX-valX;
-
-                double dy = finy-valY;
-
-                double relacion = dx/dy;
-
-                relacion = Math.abs(relacion);
-                if (!(finX > valX)) {
-                    relacion = relacion * (-1);
-                }
-                ball.setDx(relacion*Math.abs(ball.getDy()));
+                r.intersect(ball);
+                ball.colder(r);
+                intersect = true;
             }
         }
+        return intersect;
     }
 
-    /** move things*/
-    public void moveRacked(boolean right, int racked){
-        rackets.get(0).move(right,ball);
+    public void setPause(boolean pause) {
+        ball.setIsPause(pause);
+        this.pause = pause;
     }
 
-    public void moveThreadBall(){
-        ball.move();
-        intersect();
-        plusScore();
-        rackets.get(1).move(true, ball);
+    public void run(){
+        threadBall.start();
+    }
+
+    public void addScore(String nameOne, String nameTwo){
+        rackets.get(0).addScore(sideUp,nameOne);
+        rackets.get(1).addScore(sideDown-50,nameTwo);
+    }
+
+    public Score getScore(int i){
+        return rackets.get(i).getScore();
     }
 
     public void plusScore(){
-        if (ball.getY()<(sideUp-50)){
+        if (ball.getY() < 0){
             restart();
+            setPause(true);ball.setIsPause(true);
             rackets.get(1).setScore(1);
         }else if (ball.getY()> sideDown){
             restart();
+            setPause(true);ball.setIsPause(true);
             rackets.get(0).setScore(1);
         }
     }
 
     public void restart(){
-        rackets.get(0).setX((sideRight-sideLeft)/2);rackets.get(0).setY(sideUp-30);
-        rackets.get(1).setX((sideRight-sideLeft)/2);rackets.get(1).setY(sideDown-115);
+        block = null;
+        isPower = true;
+        ball.setColder(false);
+        if(timer != null)timer.cancel();
+        rackets.get(0).setX(432-50);rackets.get(0).setY(sideUp-40);rackets.get(0).setDx(2);
+        rackets.get(1).setX(432-50);rackets.get(1).setY(sideDown-80);rackets.get(1).setDx(2);
         for(Racket r : rackets)r.setHitBox();
-        ball.setX((sideRight-sideLeft)/2); ball.setY((sideDown-sideUp)/2);
-        ball.setDy(3);ball.setDx(0);
+        ball.setX(441-35); ball.setY(384-35);
+        ball.setDy(ball.getSpeed());ball.setDx(0);
     }
 
-    /** show power*/
+    public void moveRacked(boolean right, int racked){
+        rackets.get(racked).move(right,ball);
+    }
 
     public void spell(Power powerSelect){
         if(ball.getHitBox().intersects(powerSelect.getHitBox())){
             if(ball.getDy()<0){
-                powerSelect.spell(ball,rackets.get(0));
+                powerSelect.spell(this,0);
+                addBlock(1);
             }else if(ball.getDy()>0){
-                powerSelect.spell(ball,rackets.get(1));
+                powerSelect.spell(this,1);
+                addBlock(-1);
             }
             this.isPower = true;
-            timer.cancel();
-            timer.purge();
+            timer.cancel();timer.purge();
         }
+    }
+
+    public void addBlock(int dy){
+        if(block == null || !block.isBlock()){
+            block = new Block((int) (Math.random()*(600-214)+214),384-35,dy);
+        }
+    }
+
+    public void moveBlock() {
+        block.move(ball,rackets);
+    }
+
+    public void addObjective(){
+        Random random = new Random();int[] y = {61,690-50};
+        objective = new Objective((int) (Math.random()*(600-214)+214), y[random.nextInt(y.length)]);
+    }
+
+    public void objective(){
+        objective.objective(rackets,ball);
     }
 
     public void timeLimit(int delay){
@@ -116,27 +149,30 @@ public class Table implements Serializable {
         TimerTask timeSpell = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("ENTRE");
                 isPower = true;
             }
         };
         timer.schedule(timeSpell, delay);
     }
 
-
-
-    /**set Power*/
-
-    public void isPause(boolean pause){
-        this.pause = pause;
+    public void setPower(Power power) {
+        if(power == null) isPower = false;
+        else isPower = true;
+        rackets.get(0).setIsPower(power);
+        rackets.get(1).setIsPower(power);
     }
 
-    public void setPower(boolean power) {
-        isPower = power;
+    public boolean getPause(){
+        return this.pause;
     }
 
-    /** get things*/
+    public Block getBlock(){
+        return block;
+    }
 
+    public boolean getIsObjective(){
+        return objective.isObjective();
+    }
 
     public Ball getBall(){
         return ball;
@@ -150,20 +186,19 @@ public class Table implements Serializable {
         return pause;
     }
 
-    public void setPause(boolean pause) {
-        this.pause = pause;
-    }
-
     public boolean isPower() {
         return isPower;
     }
 
-    public Score getScore(int i){
-        return rackets.get(i).getScore();
+    public int getNumberBots() {
+        return numberBots;
     }
 
-    /** run thread*/
-    public void run(){
-        threadBall.start();
+    public Objective getObjective() {
+        return objective;
+    }
+
+    public void runObjective(){
+        objective.time();
     }
 }
